@@ -19,6 +19,7 @@ class Enemy(Tank):
         self.bullet.kill()
         self.player = player
         self.isGlitched = False
+        self.isStopped = False
         self.mode = mode
         self.glitches = []
         self.delay = 250
@@ -36,19 +37,20 @@ class Enemy(Tank):
 
     def update(self):
         super().update()
-        self.deltaX = 0
-        self.deltaY = 0
-        self.chooseNumber()
+        if not self.isStopped:
+            self.deltaX = 0
+            self.deltaY = 0
+            self.chooseNumber()
 
-        now = pygame.time.get_ticks()
-        if self.mode != 3:
-            if now - self.lastShot > self.delay:
-                self.lastShot = now
-                self.shoot()
-        self.move()
-        self.checkSprite()
-        self.setTankSprite()
-        self.checkGlitch()
+            now = pygame.time.get_ticks()
+            if self.mode != 3:
+                if now - self.lastShot > self.delay:
+                    self.lastShot = now
+                    self.shoot()
+            self.move()
+            self.checkSprite()
+            self.setTankSprite()
+            self.checkGlitch()
 
     def move(self):
         if self.canMove == False:

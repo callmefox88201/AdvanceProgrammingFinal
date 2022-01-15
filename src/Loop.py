@@ -32,11 +32,19 @@ class Loop:
 
         lifeBonus = pygame.sprite.GroupSingle()
         boomBonus = pygame.sprite.GroupSingle()
-        protectBonus = pygame.sprite.GroupSingle()
+        shovelBonus = pygame.sprite.GroupSingle()
         starBonus = pygame.sprite.GroupSingle()
+        clockBonus = pygame.sprite.GroupSingle()
+        helmetBonus = pygame.sprite.GroupSingle()
 
         hasShovel = False
         shovelTicks = 0
+
+        isStopTime = False
+        stopTimeTicks = 0
+
+        hasHelmet = True
+        helmetTicks = 0
 
         bullets = []
 
@@ -107,6 +115,36 @@ class Loop:
                 else:
                     ticks = 300
 
+            if isStopTime and stopTimeTicks >= 500:
+                for enemy in enemies:
+                    enemy.isStopped = False
+                stopTimeTicks = 0
+                isStopTime = False
+
+            if hasHelmet and helmetTicks >= 300:
+                helmetTicks = 0
+                hasHelmet = False
+                for p in playerGroup:
+                    p.changeImage('player.png')
+
+
+            tankSprites.update()
+            playerGroup.update()
+            playerBullets.update()
+            enemyBullets.update()
+            screen.fill((0, 0, 0))
+
+            tankFields = self.spriteGrouping(tankSprites, fieldSprites)
+            playerFields = self.spriteGrouping(playerGroup, fieldSprites)
+            for p in playerGroup:
+                tmp = self.spriteGrouping(tankFields, playerGroup)
+                tmp.remove(player)
+                player.checkSprite(tmp)
+            for enemy in enemies:
+                if enemy.alive():
+                    tmp = self.spriteGrouping(tankFields, playerFields)
+                    tmp.remove(enemy)
+                    enemy.checkSprite(tmp)
             if hasShovel and shovelTicks >= 1000:
                 shovelTicks = 0
                 hasShovel = False
@@ -127,32 +165,14 @@ class Loop:
                 f.walls.add(Wall(7 * 50, 12 * 50, 'tl'))
                 f.walls.add(Wall(7 * 50, 11 * 50, 'bl'))
 
-
-            tankSprites.update()
-            playerGroup.update()
-            playerBullets.update()
-            enemyBullets.update()
-            screen.fill((0, 0, 0))
-
-            tankFields = self.spriteGrouping(tankSprites, fieldSprites)
-            playerFields = self.spriteGrouping(playerGroup, fieldSprites)
-            for p in playerGroup:
-                tmp = self.spriteGrouping(tankFields, playerGroup)
-                tmp.remove(player)
-                player.checkSprite(tmp)
-            for enemy in enemies:
-                if enemy.alive():
-                    tmp = self.spriteGrouping(tankFields, playerFields)
-                    tmp.remove(enemy)
-                    enemy.checkSprite(tmp)
-
             iceSprites.draw(screen)
             fieldSprites.draw(screen)
             tankSprites.draw(screen)
             lifeBonus.draw(screen)
             boomBonus.draw(screen)
-            protectBonus.draw(screen)
+            shovelBonus.draw(screen)
             starBonus.draw(screen)
+            clockBonus.draw(screen)
             playerBullets.draw(screen)
             enemyBullets.draw(screen)
             playerGroup.draw(screen)
@@ -168,15 +188,19 @@ class Loop:
             for p in playerGroup:
                 if pygame.sprite.spritecollide(p, lifeBonus, True):
                     playerLife += 1
+
                 if pygame.sprite.spritecollide(p, boomBonus, True):
                     for enemy in enemies:
                         if enemy.isAlive:
                             enemy.kill()
                             enemyCount -= 1
+                    for b in enemyBullets:
+                        b.kill()
                     if enemyCount <= 0:
                         enemieAlives = False
                         return p.mode
-                if pygame.sprite.spritecollide(p, protectBonus, True):
+
+                if pygame.sprite.spritecollide(p, shovelBonus, True):
                     hasShovel = True
                     f.steels.add(steel1)
                     f.steels.add(steel2)
@@ -187,13 +211,24 @@ class Loop:
                     f.steels.add(steel7)
                     f.steels.add(steel8)
 
-
                 if pygame.sprite.spritecollide(p, starBonus, True):
                     p.mode += 1
-                    if p.mode > 1:
-                       p.maxCooldown = 30
+                    p.maxSpeed = 3
+                    p.maxCooldown = 30
                     if p.mode > 3:
                         p.mode = 3
+                
+                if pygame.sprite.spritecollide(p, clockBonus,True):
+                    isStopTime = True
+                    for enemy in enemies:
+                        enemy.isStopped = True
+                    for b in enemyBullets:
+                        b.kill()
+
+                if pygame.sprite.spritecollide(p, helmetBonus, True):
+                    hasHelmet = True
+                    for p in playerGroup:
+                        p.changeImage('green.gif')
 
             if len(bullets) > 0:
                 for bullet in bullets:
@@ -216,6 +251,7 @@ class Loop:
                             bullet, f.walls, True)
                         fieldSprites = f.fieldSpriteGroup()
                         bullet.kill()
+
                 for bullet in bullets:
                     if pygame.sprite.spritecollideany(bullet, f.city):
                         pygame.sprite.spritecollide(bullet, f.city, True)
@@ -223,21 +259,24 @@ class Loop:
 
                 for bullet in bullets:
                     if pygame.sprite.spritecollideany(bullet, playerGroup):
-                        collided = pygame.sprite.spritecollide(
-                            bullet, playerGroup, False)
-                        playerLife -= 1
-                        if playerLife <= 0:
-                            return 'lose'
-                        else:
-                            for i in collided:
-                                i.respawn()
-                            for tank in tankSprites:
-                                tank.player = playerGroup
-                        if playerLife != 3 and len(lifeBonus) == 0 and random.randint(0, 1) == 0:
-                            life = Bonus(random.randint(
-                                1, 11) * 50 + 2, random.randint(1, 11) * 50 + 2, 'life')
-                            lifeBonus.add(life)
                         bullet.kill()
+                        if not hasHelmet:
+                            collided = pygame.sprite.spritecollide(
+                                bullet, playerGroup, False)
+                            playerLife -= 1
+                            if playerLife <= 0:
+                                return 'lose'
+                            else:
+                                for i in collided:
+                                    i.respawn()
+                                for tank in tankSprites:
+                                    tank.player = playerGroup
+                            if playerLife != 3 and len(lifeBonus) == 0 and random.randint(0, 1) == 0:
+                                life = Bonus(random.randint(
+                                    1, 11) * 50 + 2, random.randint(1, 11) * 50 + 2, 'life')
+                                lifeBonus.add(life)
+                            hasHelmet = True
+                        
 
                 for bullet in playerBullets:
                     if pygame.sprite.spritecollide(bullet, tankSprites, True):
@@ -258,18 +297,26 @@ class Loop:
                                             0, 12)) * 50 + 2, 40, playerGroup, random.randint(0, 3))
                                     enemy = newEnemy
                                     tankSprites.add(enemy)
-                        if random.randint(0, 10) == 0:
+                        if random.randint(0, 20) == 0:
                             boom = Bonus(random.randint(
                                 1, 11) * 50 + 2, random.randint(1, 11) * 50 + 2, 'boom')
                             boomBonus.add(boom)
-                        if random.randint(0, 10) == 1:
-                            protect = Bonus(random.randint(
-                                1, 11) * 50 + 2, random.randint(1, 11) * 50 + 2, 'protect')
-                            protectBonus.add(protect)
-                        if random.randint(0, 10) == 2:
+                        if random.randint(0, 20) == 1:
+                            shovel = Bonus(random.randint(
+                                1, 11) * 50 + 2, random.randint(1, 11) * 50 + 2, 'shovel')
+                            shovelBonus.add(shovel)
+                        if random.randint(0, 20) == 2:
                             star = Bonus(random.randint(
                                 1, 11) * 50 + 2, random.randint(1, 11) * 50 + 2, 'star')
                             starBonus.add(star)
+                        if random.randint(0, 20) == 3:
+                            clock = Bonus(random.randint(
+                                1, 11) * 50 + 2, random.randint(1, 11) * 50 + 2, 'clock')
+                            clockBonus.add(clock)
+                        if random.randint(0, 20) == 4:
+                            helmet = Bonus(random.randint(
+                                1, 11) * 50 + 2, random.randint(1, 11) * 50 + 2, 'helmet')
+                            helmetBonus.add(helmet)
 
                 pygame.sprite.groupcollide(
                     enemyBullets, playerBullets, True, True)
@@ -279,6 +326,10 @@ class Loop:
             ticks += 1
             if hasShovel:
                 shovelTicks += 1
+            if isStopTime:
+                stopTimeTicks += 1
+            if hasHelmet:
+                helmetTicks += 1
         return 'exit'
 
     def spriteGrouping(self, tanks, fields):
