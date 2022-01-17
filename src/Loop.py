@@ -127,7 +127,6 @@ class Loop:
                 for p in playerGroup:
                     p.changeImage('player.png')
 
-
             tankSprites.update()
             playerGroup.update()
             playerBullets.update()
@@ -165,18 +164,30 @@ class Loop:
                 f.walls.add(Wall(7 * 50, 12 * 50, 'tl'))
                 f.walls.add(Wall(7 * 50, 11 * 50, 'bl'))
 
+            for p in playerGroup:
+                if pygame.sprite.spritecollide(p, shovelBonus, True):
+                    hasShovel = True
+                    f.steels.add(steel1)
+                    f.steels.add(steel2)
+                    f.steels.add(steel3)
+                    f.steels.add(steel4)
+                    f.steels.add(steel5)
+                    f.steels.add(steel6)
+                    f.steels.add(steel7)
+                    f.steels.add(steel8)
+
             iceSprites.draw(screen)
             fieldSprites.draw(screen)
             tankSprites.draw(screen)
+            playerBullets.draw(screen)
+            enemyBullets.draw(screen)
+            playerGroup.draw(screen)
+            decorate.draw(screen)
             lifeBonus.draw(screen)
             boomBonus.draw(screen)
             shovelBonus.draw(screen)
             starBonus.draw(screen)
             clockBonus.draw(screen)
-            playerBullets.draw(screen)
-            enemyBullets.draw(screen)
-            playerGroup.draw(screen)
-            decorate.draw(screen)
             font = pygame.font.SysFont('Comic Sans MS', 24, True)
             txtEnemyCount = font.render(
                 'Enemies: ' + str(enemyCount), False, (255, 255, 255))
@@ -200,25 +211,14 @@ class Loop:
                         enemieAlives = False
                         return p.mode
 
-                if pygame.sprite.spritecollide(p, shovelBonus, True):
-                    hasShovel = True
-                    f.steels.add(steel1)
-                    f.steels.add(steel2)
-                    f.steels.add(steel3)
-                    f.steels.add(steel4)
-                    f.steels.add(steel5)
-                    f.steels.add(steel6)
-                    f.steels.add(steel7)
-                    f.steels.add(steel8)
-
                 if pygame.sprite.spritecollide(p, starBonus, True):
                     p.mode += 1
                     p.maxSpeed = 3
                     p.maxCooldown = 30
                     if p.mode > 3:
                         p.mode = 3
-                
-                if pygame.sprite.spritecollide(p, clockBonus,True):
+
+                if pygame.sprite.spritecollide(p, clockBonus, True):
                     isStopTime = True
                     for enemy in enemies:
                         enemy.isStopped = True
@@ -276,7 +276,6 @@ class Loop:
                                     1, 11) * 50 + 2, random.randint(1, 11) * 50 + 2, 'life')
                                 lifeBonus.add(life)
                             hasHelmet = True
-                        
 
                 for bullet in playerBullets:
                     if pygame.sprite.spritecollide(bullet, tankSprites, True):
@@ -297,23 +296,23 @@ class Loop:
                                             0, 12)) * 50 + 2, 40, playerGroup, random.randint(0, 3))
                                     enemy = newEnemy
                                     tankSprites.add(enemy)
-                        if random.randint(0, 20) == 0:
+                        if random.randint(0, 12) == 0:
                             boom = Bonus(random.randint(
                                 1, 11) * 50 + 2, random.randint(1, 11) * 50 + 2, 'boom')
                             boomBonus.add(boom)
-                        if random.randint(0, 20) == 1:
+                        if random.randint(0, 12) == 1:
                             shovel = Bonus(random.randint(
                                 1, 11) * 50 + 2, random.randint(1, 11) * 50 + 2, 'shovel')
                             shovelBonus.add(shovel)
-                        if random.randint(0, 20) == 2:
+                        if random.randint(0, 12) == 2:
                             star = Bonus(random.randint(
                                 1, 11) * 50 + 2, random.randint(1, 11) * 50 + 2, 'star')
                             starBonus.add(star)
-                        if random.randint(0, 20) == 3:
+                        if random.randint(0, 12) == 3:
                             clock = Bonus(random.randint(
                                 1, 11) * 50 + 2, random.randint(1, 11) * 50 + 2, 'clock')
                             clockBonus.add(clock)
-                        if random.randint(0, 20) == 4:
+                        if random.randint(0, 12) == 4:
                             helmet = Bonus(random.randint(
                                 1, 11) * 50 + 2, random.randint(1, 11) * 50 + 2, 'helmet')
                             helmetBonus.add(helmet)
