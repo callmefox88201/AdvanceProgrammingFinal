@@ -9,8 +9,6 @@ class Sea(Block):
 
         self.full = pygame.transform.scale(pygame.image.load(
             'src/sprites/blocks/sea.png'), (self.display, self.display))
-        self.small = pygame.transform.scale(pygame.image.load(
-            'src/sprites/blocks/sea.png'), (self.display // 2, self.display // 2))
 
         self.setImage()
         self.updateRect()

@@ -1,3 +1,4 @@
+from turtle import delay
 import pygame
 from src.Loop import Loop
 
@@ -17,3 +18,4 @@ while True:
 
     if levelNo == 36:
         levelNo = 1
+    pygame.time.wait(3000)

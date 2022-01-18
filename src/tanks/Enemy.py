@@ -114,7 +114,7 @@ class Enemy(Tank):
                         else:
                             self.direction = 'a'
                         self.shoot()
-                        self.direction_glitch = True
+                        self.isGlitched = True
                     elif self.checkClose(p.rect.x, self.rect.x):
                         if p.rect.y > self.rect.y:
                             self.direction = 's'
@@ -128,7 +128,7 @@ class Enemy(Tank):
                         self.shoot()
                     elif p.rect.x < self.rect.x and self.direction == 'a':
                         self.shoot()
-                    self.direction_glitch = True
+                    self.isGlitched = True
                 elif self.checkClose(p.rect.x, self.rect.x):
                     if p.rect.y > self.rect.y and self.direction == 's':
                         self.shoot()

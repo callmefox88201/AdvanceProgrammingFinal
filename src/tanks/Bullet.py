@@ -33,13 +33,9 @@ class Bullet(pygame.sprite.Sprite):
             self.deltaY = self.speed
 
     def update(self):
-        if self.direction == 'w':
+        if self.direction == 'w' or self.direction == 's':
             self.rect.y += self.deltaY
-        if self.direction == 'd':
-            self.rect.x += self.deltaX
-        if self.direction == 's':
-            self.rect.y += self.deltaY
-        if self.direction == 'a':
+        if self.direction == 'd' or self.direction == 'a':
             self.rect.x += self.deltaX
         if self.rect.top < 0 or self.rect.bottom > height or self.rect.right > width or self.rect.left < 0:
             self.kill()

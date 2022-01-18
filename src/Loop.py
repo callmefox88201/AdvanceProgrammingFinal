@@ -1,6 +1,5 @@
 import random
 import pygame
-from pygame import sprite
 from src.Bonus import Bonus
 from src.Field import Field
 from src.blocks.Wall import Wall
@@ -188,6 +187,8 @@ class Loop:
             shovelBonus.draw(screen)
             starBonus.draw(screen)
             clockBonus.draw(screen)
+            helmetBonus.draw(screen)
+
             font = pygame.font.SysFont('Comic Sans MS', 24, True)
             txtEnemyCount = font.render(
                 'Enemies: ' + str(enemyCount), False, (255, 255, 255))
@@ -227,8 +228,7 @@ class Loop:
 
                 if pygame.sprite.spritecollide(p, helmetBonus, True):
                     hasHelmet = True
-                    for p in playerGroup:
-                        p.changeImage('green.gif')
+                    p.changeImage('green.gif')
 
             if len(bullets) > 0:
                 for bullet in bullets:
