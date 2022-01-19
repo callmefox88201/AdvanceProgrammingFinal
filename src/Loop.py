@@ -299,23 +299,24 @@ class Loop:
                                             0, 12)) * 50 + 2, 40, playerGroup, random.randint(0, 3))
                                     enemy = newEnemy
                                     tankSprites.add(enemy)
-                        if random.randint(0, 12) == 0:
+                        r = random.randint(0, 12)
+                        if r == 0:
                             boom = Bonus(random.randint(
                                 1, 11) * 50 + 2, random.randint(1, 11) * 50 + 2, 'boom')
                             boomBonus.add(boom)
-                        if random.randint(0, 12) == 1:
+                        elif r == 1:
                             shovel = Bonus(random.randint(
                                 1, 11) * 50 + 2, random.randint(1, 11) * 50 + 2, 'shovel')
                             shovelBonus.add(shovel)
-                        if random.randint(0, 12) == 2:
+                        elif r == 2:
                             star = Bonus(random.randint(
                                 1, 11) * 50 + 2, random.randint(1, 11) * 50 + 2, 'star')
                             starBonus.add(star)
-                        if random.randint(0, 12) == 3:
+                        elif r == 3:
                             clock = Bonus(random.randint(
                                 1, 11) * 50 + 2, random.randint(1, 11) * 50 + 2, 'clock')
                             clockBonus.add(clock)
-                        if random.randint(0, 12) == 4:
+                        elif r == 4:
                             helmet = Bonus(random.randint(
                                 1, 11) * 50 + 2, random.randint(1, 11) * 50 + 2, 'helmet')
                             helmetBonus.add(helmet)
