@@ -166,6 +166,7 @@ class Loop:
             for p in playerGroup:
                 if pygame.sprite.spritecollide(p, shovelBonus, True):
                     hasShovel = True
+                    shovelTicks = 0
                     f.steels.add(steel1)
                     f.steels.add(steel2)
                     f.steels.add(steel3)
@@ -221,6 +222,7 @@ class Loop:
 
                 if pygame.sprite.spritecollide(p, clockBonus, True):
                     isStopTime = True
+                    stopTimeTicks = 0
                     for enemy in enemies:
                         enemy.isStopped = True
                     for b in enemyBullets:
@@ -228,6 +230,7 @@ class Loop:
 
                 if pygame.sprite.spritecollide(p, helmetBonus, True):
                     hasHelmet = True
+                    helmetTicks = 0
                     p.changeImage('green.gif')
 
             if len(bullets) > 0:
