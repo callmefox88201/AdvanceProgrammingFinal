@@ -11,6 +11,7 @@ class Player(Tank):
         self.bullet = Bullet(0, 0, 0)
         self.maxCooldown = 45
         self.mode = mode
+        self.secondShooted = False
         if self.mode > 0:
             self.maxSpeed = 3
             self.maxCooldown = 30
@@ -23,12 +24,6 @@ class Player(Tank):
             self.sprites.add(self.bullet)
             self.cooldown = self.maxCooldown
             self.bullets.append(self.bullet)
-            if self.mode > 1:
-                self.bullet = Bullet(
-                    self.rect.centerx, self.rect.top, self.direction)
-                self.sprites.add(self.bullet)
-                self.cooldown = self.maxCooldown
-                self.bullets.append(self.bullet)
 
     def update(self):
         super().update()
@@ -45,6 +40,15 @@ class Player(Tank):
             self.goDown()
         if key[pygame.K_j]:
             self.shoot()
+        if self.mode > 1 and self.cooldown > 0 and self.cooldown < 25 and not self.secondShooted:
+            self.bullet = Bullet(
+                self.rect.centerx, self.rect.top, self.direction)
+            self.sprites.add(self.bullet)
+            self.cooldown = self.maxCooldown
+            self.bullets.append(self.bullet)
+            self.secondShooted = True
+        if self.cooldown == 0:
+            self.secondShooted = False
         self.checkSprite()
         self.setTankSprite()
 
